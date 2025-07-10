@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\AuthResource;
+use App\Http\Resources\ApiResponse;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -23,7 +23,7 @@ class AuthController extends Controller
         ]);
 
         if ($validation->fails()) {
-            return new AuthResource(
+            return new ApiResponse(
                 ['errors' => $validation->errors()],
                 false,
                 'Validation failed'
@@ -40,10 +40,10 @@ class AuthController extends Controller
             $token = JWTAuth::fromUser($user);
         } catch (\Throwable $th) {
             $user->delete();
-            return new AuthResource(null, false, 'Token generation failed: ' . $th->getMessage());
+            return new ApiResponse(null, false, 'Token generation failed: ' . $th->getMessage());
         }
 
-        return new AuthResource(
+        return new ApiResponse(
             [
                 'token' => $token,
                 'user' => new UserResource($user)
@@ -62,7 +62,7 @@ class AuthController extends Controller
         ]);
 
         if ($validation->fails()) {
-            return new AuthResource(
+            return new ApiResponse(
                 ['errors' => $validation->errors()],
                 false,
                 'Validation failed'
@@ -71,12 +71,12 @@ class AuthController extends Controller
 
         $crendentials = $request->only('email', 'password');
         if (!$token = JWTAuth::attempt($crendentials)) {
-            return new AuthResource(['error' => 'Unauthorized'], false, 'Login failed');
+            return new ApiResponse(['error' => 'Unauthorized'], false, 'Login failed');
         }
 
         $user = JWTAuth::user();
 
-        return new AuthResource(
+        return new ApiResponse(
             [
                 'token' => $token,
                 'user' => new UserResource($user)
