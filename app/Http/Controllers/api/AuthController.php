@@ -54,36 +54,36 @@ class AuthController extends Controller
     }
 
 
-    // public function login(Request $request)
-    // {
-    //     $validation = Validator::make($request->all(), [
-    //         'email' => 'required|email',
-    //         'password' => 'required|string',
-    //     ]);
+    public function login(Request $request)
+    {
+        $validation = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
 
-    //     if ($validation->fails()) {
-    //         return new AuthResource(
-    //             ['errors' => $validation->errors()],
-    //             false,
-    //             'Validation failed'
-    //         );
-    //     }
+        if ($validation->fails()) {
+            return new AuthResource(
+                ['errors' => $validation->errors()],
+                false,
+                'Validation failed'
+            );
+        }
 
-    //     $crendentials = $request->only('email', 'password');
-    //     if (!$token = JWTAuth::attempt($crendentials)) {
-    //         return new AuthResource(['error' => 'Unauthorized'], false, 'Login failed');
-    //     }
+        $crendentials = $request->only('email', 'password');
+        if (!$token = JWTAuth::attempt($crendentials)) {
+            return new AuthResource(['error' => 'Unauthorized'], false, 'Login failed');
+        }
 
-    //     $user = JWTAuth::user();
+        $user = JWTAuth::user();
 
-    //     return new AuthResource(
-    //         [
-    //             'token' => $token,
-    //             'user' => new UserResource($user)
-    //             // 'user' => new UserResource(auth()->user())
-    //         ],
-    //         true,
-    //         'Login successful'
-    //     );
-    // }
+        return new AuthResource(
+            [
+                'token' => $token,
+                'user' => new UserResource($user)
+                // 'user' => new UserResource(auth()->user())
+            ],
+            true,
+            'Login successful'
+        );
+    }
 }
